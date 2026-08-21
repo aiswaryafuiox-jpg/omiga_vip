@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../core/const/app_color.dart';
 import '../../core/const/app_images.dart';
+import '../../core/di/service_locator.dart';
 import '../../core/utils/helper/text_helper.dart';
+import '../../core/utils/navigation/app_routes.dart';
+import '../../domain/usecase/logout_usecase.dart';
 import '../controller/dashboard_controller.dart';
 
 class SettingsView extends StatelessWidget {
@@ -19,14 +22,15 @@ class SettingsView extends StatelessWidget {
         elevation: 0,
         leading: Navigator.canPop(context)
             ? IconButton(
-                icon: const Icon(Icons.arrow_back_ios, color: AppColors.textPrimary, size: 20),
+                icon: const Icon(
+                  Icons.arrow_back_ios,
+                  color: AppColors.textPrimary,
+                  size: 20,
+                ),
                 onPressed: () => Get.back(),
               )
             : null,
-        title: Text(
-          'Profile',
-          style: TextHelper.heading1,
-        ),
+        title: Text('Profile', style: TextHelper.heading1),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -50,7 +54,9 @@ class SettingsView extends StatelessWidget {
                     backgroundColor: AppColors.accentGold,
                     child: CircleAvatar(
                       radius: 28,
-                      backgroundImage: const NetworkImage(AppImages.profileAvatar),
+                      backgroundImage: const NetworkImage(
+                        AppImages.profileAvatar,
+                      ),
                       backgroundColor: AppColors.primaryDark,
                     ),
                   ),
@@ -59,26 +65,34 @@ class SettingsView extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Obx(() => Text(
-                              dbController.username.value,
-                              style: TextHelper.bodyText1.copyWith(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
-                            )),
+                        Obx(
+                          () => Text(
+                            dbController.username.value,
+                            style: TextHelper.bodyText1.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
                         const SizedBox(height: 4),
-                        Obx(() => Text(
-                              dbController.userId.value,
-                              style: TextHelper.caption.copyWith(color: AppColors.accentGold),
-                            )),
+                        Obx(
+                          () => Text(
+                            dbController.userId.value,
+                            style: TextHelper.caption.copyWith(
+                              color: AppColors.accentGold,
+                            ),
+                          ),
+                        ),
                         const SizedBox(height: 2),
-                        Obx(() => Text(
-                              dbController.email.value,
-                              style: TextHelper.caption,
-                            )),
+                        Obx(
+                          () => Text(
+                            dbController.email.value,
+                            style: TextHelper.caption,
+                          ),
+                        ),
                       ],
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -192,7 +206,9 @@ class SettingsView extends StatelessWidget {
       builder: (context) {
         return AlertDialog(
           backgroundColor: AppColors.secondaryDark,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
           title: Text(
             'About App',
             style: TextHelper.heading2.copyWith(color: AppColors.accentGold),
@@ -216,7 +232,9 @@ class SettingsView extends StatelessWidget {
               onPressed: () => Navigator.pop(context),
               child: Text(
                 'Close',
-                style: TextHelper.bodyText2.copyWith(color: AppColors.accentGold),
+                style: TextHelper.bodyText2.copyWith(
+                  color: AppColors.accentGold,
+                ),
               ),
             ),
           ],
@@ -231,7 +249,9 @@ class SettingsView extends StatelessWidget {
       builder: (context) {
         return AlertDialog(
           backgroundColor: AppColors.secondaryDark,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
           title: Text(
             'Logout',
             style: TextHelper.heading2.copyWith(color: AppColors.accentGold),
@@ -245,13 +265,16 @@ class SettingsView extends StatelessWidget {
               onPressed: () => Navigator.pop(context),
               child: Text(
                 'Cancel',
-                style: TextHelper.bodyText2.copyWith(color: AppColors.textSecondary),
+                style: TextHelper.bodyText2.copyWith(
+                  color: AppColors.textSecondary,
+                ),
               ),
             ),
             ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Get.back(); // Dismiss SettingsView
+              onPressed: () async {
+                Navigator.of(context).pop();
+                await sl<LogoutUseCase>().execute();
+                Get.offAllNamed(AppRoutes.login);
                 Get.snackbar(
                   'Logged Out',
                   'You have been logged out successfully.',
@@ -265,11 +288,16 @@ class SettingsView extends StatelessWidget {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.redAccent,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
               child: Text(
                 'Logout',
-                style: TextHelper.bodyText2.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+                style: TextHelper.bodyText2.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],
